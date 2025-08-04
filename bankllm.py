@@ -9,7 +9,7 @@ load_dotenv()
 
 # Fix OpenAI API key initialization - use environment variable properly
 client = OpenAI(
-    api_key=os.getenv("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")  # Use standard OPENAI_API_KEY environment variable
+    api_key=os.getenv("OPENAI_API_KEY")  # Use standard OPENAI_API_KEY environment variable
 )
 
 INVESTMENT_BANKS = [
@@ -149,16 +149,39 @@ target_bank: [bank name or None]
         return score, sentiment, target
 
 def process_csv_with_llm(df: pd.DataFrame) -> pd.DataFrame:
-    """Process CSV with LLM sentiment analysis"""
+    """Process CSV with LLM sentiment analysis - ONLY for relevant items and exclude non-relevant from output"""
+    
+    # Count relevant vs non-relevant items
+    total_items = len(df)
+    relevant_df = df[df['relevant'] == 'YES'].copy()
+    non_relevant_count = len(df[df['relevant'] == 'NO'])
+    
+    print(f"\n💭 Processing sentiment analysis and filtering:")
+    print(f"   Total items: {total_items}")
+    print(f"   Relevant items (will process and include): {len(relevant_df)}")
+    print(f"   Non-relevant items (will exclude from output): {non_relevant_count}")
+    print("-" * 60)
+
+    if len(relevant_df) == 0:
+        print("⚠️ No relevant items found. Returning empty DataFrame with expected columns.")
+        # Return empty DataFrame with all expected columns
+        empty_df = pd.DataFrame(columns=[
+            'text', 'subject', 'object', 'relevant', 'accuracy_AP', 'Accuracy SA',
+            'target_sentiment_score', 'target_sentiment', 'target_bank',
+            'model_used', 'new_rule_used'
+        ])
+        return empty_df
+
     target_sentiment_scores = []
     target_sentiments = []
     target_banks = []
 
-    for idx, row in df.iterrows():
-        print(f"\n📰 Processing row {idx+1}:")
+    # Process only relevant items
+    for idx, (original_idx, row) in enumerate(relevant_df.iterrows()):
+        print(f"\n📰 Processing relevant item {idx+1}/{len(relevant_df)} (original row {original_idx+1}):")
         print(f"Text: {row['text']}")
         
-        # Calculate sentiment for ALL rows
+        print("✅ Item is relevant - processing with LLM...")
         score, sentiment, target = call_gpt_for_sentiment(row['text'])
         print(f"✅ Target Sentiment Score: {score}, Target Sentiment: {sentiment}, Target Bank: {target}")
 
@@ -166,16 +189,24 @@ def process_csv_with_llm(df: pd.DataFrame) -> pd.DataFrame:
         target_sentiments.append(sentiment)
         target_banks.append(target)
 
-    df["target_sentiment_score"] = target_sentiment_scores
-    df["target_sentiment"] = target_sentiments
-    df["target_bank"] = target_banks
+    # Add sentiment columns to relevant items only
+    relevant_df["target_sentiment_score"] = target_sentiment_scores
+    relevant_df["target_sentiment"] = target_sentiments
+    relevant_df["target_bank"] = target_banks
+
+    # Print processing summary
+    print(f"\n📊 Processing Summary:")
+    print(f"   Total original items: {total_items}")
+    print(f"   Items processed with LLM: {len(relevant_df)}")
+    print(f"   Items excluded (not relevant): {non_relevant_count}")
+    print(f"   Final output items: {len(relevant_df)}")
 
     # Reorder columns to include all original columns plus new sentiment columns
-    columns = list(df.columns)
+    columns = list(relevant_df.columns)
     # Move sentiment columns to the end
     sentiment_cols = ["target_sentiment_score", "target_sentiment", "target_bank"]
     other_cols = [col for col in columns if col not in sentiment_cols]
-    final_df = df[other_cols + sentiment_cols]
+    final_df = relevant_df[other_cols + sentiment_cols]
 
     return final_df
 
