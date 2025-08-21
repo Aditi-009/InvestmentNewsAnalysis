@@ -31,16 +31,110 @@ INVESTMENT_BANKS = [
     "Raymond James"
 ]
 
-# Company names that are NOT banks (for improved filtering)
+# Enhanced company names with 70 stocks - both ticker symbols and company names
+
 NON_BANK_COMPANIES = [
-    "Apple", "Microsoft", "Tesla", "Amazon", "Meta", "Netflix", "AMD", "Salesforce",
-    "Uber", "Airbnb", "Shopify", "Zoom", "NVIDIA", "Alphabet", "Google", "Nvidia",
-    "Brixmor Property Group", "Covenant Logistics Group", "GE Vernova", "Synchrony Financial",
-    "Venture Global", "Meta Platforms"
+    # 70 Stock Companies - Ticker Symbols
+    "AAPL", "Apple Inc.",
+    "AMZN", "Amazon.com Inc.",
+    "TSLA", "Tesla Inc.",
+    "CAT", "Caterpillar Inc.",
+    "UBER", "Uber Technologies Inc.",
+    "JPM", "JPMorgan Chase & Co.",
+    "PFE", "Pfizer Inc.",
+    "PG", "The Procter & Gamble Company",
+    "MAR", "Marriott International Inc.",
+    "XOM", "Exxon Mobil Corporation",
+    "GME", "GameStop Corp.",
+    "GOOGL", "Alphabet Inc.",
+    "META", "Meta Platforms Inc.",
+    "MSFT", "Microsoft Corporation",
+    "BA", "The Boeing Company",
+    "AMD", "Advanced Micro Devices Inc.",
+    "NFLX", "Netflix Inc.",
+    "NVDA", "NVIDIA Corporation",
+    "BABA", "Alibaba Group Holding Limited",
+    "XYZ", "Not a valid/recognized ticker",
+    "WMT", "Walmart Inc.",
+    "DIS", "The Walt Disney Company",
+    "F", "Ford Motor Company",
+    "GS", "The Goldman Sachs Group Inc.",
+    "NVAX", "Novavax Inc.",
+    "JNJ", "Johnson & Johnson",
+    "V", "Visa Inc.",
+    "PYPL", "PayPal Holdings Inc.",
+    "BAC", "Bank of America Corporation",
+    "INTC", "Intel Corporation",
+    "APP", "Applovin Corporation",
+    "ASTS", "AST SpaceMobile Inc.",
+    "AVGO", "Broadcom Inc.",
+    "CELH", "Celsius Holdings Inc.",
+    "COIN", "Coinbase Global Inc.",
+    "COST", "Costco Wholesale Corporation",
+    "CRM", "Salesforce Inc.",
+    "CRWD", "CrowdStrike Holdings Inc.",
+    "CVS", "CVS Health Corporation",
+    "DELL", "Dell Technologies Inc.",
+    "DKNG", "DraftKings Inc.",
+    "HDB", "HDFC Bank Limited",
+    "HOOD", "Robinhood Markets Inc.",
+    "IBN", "ICICI Bank Limited",
+    "INFY", "Infosys Limited",
+    "LCID", "Lucid Group Inc.",
+    "LULU", "Lululemon Athletica Inc.",
+    "MA", "Mastercard Incorporated",
+    "MMYT", "MakeMyTrip Limited",
+    "MRNA", "Moderna Inc.",
+    "MSTR", "MicroStrategy Incorporated",
+    "MU", "Micron Technology Inc.",
+    "NKE", "NIKE Inc.",
+    "NU", "Nu Holdings Ltd.",
+    "PLTR", "Palantir Technologies Inc.",
+    "RBLX", "Roblox Corporation",
+    "RDDT", "Reddit Inc.",
+    "RDY", "Dr. Reddy's Laboratories Limited",
+    "RIVN", "Rivian Automotive Inc.",
+    "SMCI", "Super Micro Computer Inc.",
+    "SNOW", "Snowflake Inc.",
+    "SOFI", "SoFi Technologies Inc.",
+    "TGT", "Target Corporation",
+    "TTM", "Tata Motors Limited",
+    "U", "Unity Software Inc.",
+    "UNH", "UnitedHealth Group Incorporated",
+    "VKTX", "Viking Therapeutics Inc.",
+    "WBA", "Walgreens Boots Alliance Inc.",
+    "WIT", "Wipro Limited",
+    "ZETA", "Zeta Global Holdings Corp.",
+    
+    # 70 Stock Companies - Company Names
+    "Apple Inc", "Amazon.com Inc", "Tesla Inc", "Caterpillar Inc", "Uber Technologies Inc",
+    "Pfizer Inc", "Procter & Gamble Co", "Marriott International Inc", "Exxon Mobil Corp",
+    "GameStop Corp", "Alphabet Inc", "Meta Platforms Inc", "Microsoft Corporation",
+    "Boeing Co", "Advanced Micro Devices Inc", "Netflix Inc", "NVIDIA Corporation",
+    "Alibaba Group Holding Ltd", "Walmart Inc", "Walt Disney Co", "Ford Motor Co",
+    "Goldman Sachs Group Inc", "Novavax Inc", "Johnson & Johnson", "Visa Inc",
+    "PayPal Holdings Inc", "Bank of America Corp", "Intel Corporation",
+    "Digital Turbine Inc", "AST SpaceMobile Inc", "Broadcom Inc", "Celsius Holdings Inc",
+    "Coinbase Global Inc", "Costco Wholesale Corp", "Salesforce Inc", "CrowdStrike Holdings Inc",
+    "CVS Health Corp", "Dell Technologies Inc", "DraftKings Inc", "HDFC Bank Ltd",
+    "Robinhood Markets Inc", "ICICI Bank Ltd", "Infosys Ltd", "Lucid Group Inc",
+    "Lululemon Athletica Inc", "Mastercard Inc", "MakeMyTrip Ltd", "Moderna Inc",
+    "MicroStrategy Inc", "Micron Technology Inc", "Nike Inc", "Nu Holdings Ltd",
+    "Palantir Technologies Inc", "Roblox Corp", "Reddit Inc", "Dr. Reddy's Laboratories Ltd",
+    "Rivian Automotive Inc", "Super Micro Computer Inc", "Snowflake Inc", "SoFi Technologies Inc",
+    "Target Corp", "TTM Technologies Inc", "Unity Software Inc", "UnitedHealth Group Inc",
+    "Veritek Global Inc", "Walgreens Boots Alliance Inc", "Wipro Ltd", "Zeta Global Holdings Corp",
+    
+    # Additional common variations
+    "Procter and Gamble", "P&G", "Walt Disney Company", "Disney", "Johnson and Johnson", "J&J",
+    "Exxon", "GameStop", "Advanced Micro Devices", "Broadcom Limited", "Costco",
+    "Super Micro Computer", "SMCI", "Unity", "UnitedHealth", "Walgreens", "MakeMyTrip Limited",
+    "Dr Reddy's", "Dr. Reddy", "Reddy's Labs", "Micron", "PayPal", "CrowdStrike",
+    "Robinhood", "DraftKings", "Lululemon", "Palantir", "Roblx", "Snowflake", "SoFi"
 ]
 
-# Action keywords that indicate regulatory/negative actions
-REGULATORY_ACTIONS = [
+# Action keywords that indicate regulatory/negative actions (fallback list)
+REGULATORY_ACTIONS_FALLBACK = [
     "investigates", "investigate", "sues", "sue", "fines", "fine", "penalizes", "penalize",
     "sanctions", "sanction", "charges", "charge", "prosecutes", "prosecute"
 ]
@@ -280,22 +374,92 @@ def map_to_investment_bank(entity: str) -> Optional[str]:
     return None
 
 def is_company_name(entity: str) -> bool:
-    """Check if entity is a known company name (non-bank)"""
+    """Check if entity is a known company name (non-bank) - Enhanced with 70 stocks"""
     if not entity:
         return False
     
     entity_lower = entity.lower().strip()
     
-    for company in NON_BANK_COMPANIES:
-        if company.lower() in entity_lower or entity_lower in company.lower():
-            return True
+    # Sort companies by length (longest first) to avoid partial matches
+    sorted_companies = sorted(NON_BANK_COMPANIES, key=len, reverse=True)
+    
+    for company in sorted_companies:
+        company_lower = company.lower()
+        
+        # For ticker symbols (short names), require exact match or word boundary
+        if len(company) <= 4 and company.isupper():
+            # Exact match for ticker symbols
+            if entity_lower == company_lower:
+                return True
+            # Word boundary match for ticker symbols in longer text
+            import re
+            pattern = r'\b' + re.escape(company_lower) + r'\b'
+            if re.search(pattern, entity_lower):
+                return True
+        else:
+            # For company names, use contains check
+            if company_lower in entity_lower or entity_lower in company_lower:
+                return True
     
     return False
 
 def has_regulatory_action(text: str) -> bool:
-    """Check if text contains regulatory/negative action keywords"""
+    """Check if text contains regulatory/negative action using AI detection with fallback"""
+    
+    # Try AI detection first
+    try:
+        # Import OpenAI here to avoid dependency issues if not available
+        from openai import OpenAI
+        import os
+        from dotenv import load_dotenv
+        
+        load_dotenv()
+        api_key = os.getenv("OPENAI_API_KEY")
+        
+        if api_key:
+            client = OpenAI(api_key=api_key)
+            
+            prompt = f"""
+Analyze this financial news text and determine if it contains regulatory or legal actions against financial institutions (banks, investment firms, etc.).
+
+Text: "{text}"
+
+Look for actions such as:
+- Government investigations, lawsuits, or legal proceedings
+- Regulatory fines, penalties, or sanctions
+- Compliance violations or enforcement actions
+- SEC, CFTC, or other regulatory body actions
+- Criminal charges or prosecutions
+- Settlement agreements for regulatory violations
+
+Respond with EXACTLY:
+regulatory_action: YES or NO
+confidence: HIGH, MEDIUM, or LOW
+"""
+            
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.1,
+                max_tokens=50
+            )
+            
+            result = response.choices[0].message.content.strip()
+            
+            # Parse the response
+            if "regulatory_action: YES" in result:
+                return True
+            elif "regulatory_action: NO" in result:
+                return False
+    
+    except Exception as e:
+        # If AI detection fails, fall back to rule-based detection
+        print(f"AI regulatory detection failed, using fallback: {e}")
+        pass
+    
+    # Fallback to rule-based detection
     text_lower = text.lower()
-    return any(action in text_lower for action in REGULATORY_ACTIONS)
+    return any(action in text_lower for action in REGULATORY_ACTIONS_FALLBACK)
 
 def is_relevant(subject: Optional[str], obj: Optional[str], text: str, use_new_rule: bool = True) -> bool:
     """
@@ -423,6 +587,8 @@ def process_csv(input_csv: str, model_name: str = "en_core_web_trf", use_new_rul
 
     print(f"\n🔍 Processing with model: {model_name}")
     print(f"📏 Using new rule: {use_new_rule}")
+    print(f"📈 Enhanced with 70 stock companies for better filtering")
+    print(f"🤖 AI-powered regulatory action detection enabled")
     print("-" * 60)
 
     for i, row in df.iterrows():
@@ -469,5 +635,6 @@ def process_csv(input_csv: str, model_name: str = "en_core_web_trf", use_new_rul
     print(f"   Relevant: {relevant} ({relevant/total*100:.1f}%)")
     print(f"   Average accuracy score: {avg_accuracy:.3f}")
     print(f"   High accuracy (≥0.7): {high_accuracy} ({high_accuracy/total*100:.1f}%)")
+    print(f"   📈 Enhanced filtering with 70 stock companies")
     
     return result_df
